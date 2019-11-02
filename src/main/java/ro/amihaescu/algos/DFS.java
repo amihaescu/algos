@@ -1,43 +1,19 @@
 package ro.amihaescu.algos;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DFS {
 
-    public static void main(String[] args) {
-        Graph graph = new Graph(6);
-        graph.addEdge(0, 1);
-        graph.addEdge(2, 1);
-        graph.addEdge(3, 4);
-        graph.addEdge(5, 4);
-
-        graph.traverseGraph(0);
-        graph.connectedComponents();
-    }
-}
-
-class Graph {
-    private List<List<Integer>> edges;
+    private Graph graph;
     private int[] connectedComponents;
-    private int size;
 
-    Graph(int size) {
-        this.size = size;
-        connectedComponents = new int[size];
-        edges = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            edges.add(i, new ArrayList());
-        }
-    }
-
-    void addEdge(int col, int row) {
-        edges.get(col).add(row);
-        edges.get(row).add(col);
+    public DFS(Graph graph) {
+        this.graph = graph;
+        this.connectedComponents = new int[graph.getSize()];
     }
 
     void traverseGraph(int node) {
-        traverseGraph(node, new boolean[this.size]);
+        traverseGraph(node, new boolean[graph.getSize()]);
     }
 
     private void traverseGraph(int node, boolean[] visited) {
@@ -48,7 +24,7 @@ class Graph {
         visited[node] = true;
         connectedComponents[node] = componentCount;
         System.out.println("Visited " + node);
-        List<Integer> nodeEdges = edges.get(node);
+        List<Integer> nodeEdges = graph.getEdges().get(node);
         for (Integer edge : nodeEdges) {
             if (!visited[edge]) {
                 traverseGraph(edge, visited, componentCount);
@@ -57,16 +33,29 @@ class Graph {
     }
 
     void connectedComponents() {
-        boolean[] visited = new boolean[this.size];
+        boolean[] visited = new boolean[graph.getSize()];
         int componentCount = 0;
-        for (int vertex = 0; vertex < this.size; vertex++) {
+        for (int vertex = 0; vertex < graph.getSize(); vertex++) {
             if (!visited[vertex]) {
                 traverseGraph(vertex, visited, componentCount);
                 componentCount++;
             }
         }
-        for (int index = 0; index < this.size; index++) {
+        for (int index = 0; index < graph.getSize(); index++) {
             System.out.println(index + " belongs to component " + connectedComponents[index]);
         }
+    }
+
+    public static void main(String[] args) {
+
+        Graph graph = new Graph(6);
+        graph.addEdge(0, 1);
+        graph.addEdge(2, 1);
+        graph.addEdge(3, 4);
+        graph.addEdge(5, 4);
+        DFS dfs = new DFS(graph);
+
+        dfs.traverseGraph( 0);
+        dfs.connectedComponents();
     }
 }
